@@ -1,0 +1,184 @@
+# Kivy language file to test widget properties
+
+
+# Root widget
+ZoneControlFrame:
+
+## Compiles a TemperatureDisplay, LabelledLowSlider, and LabelledHiSlider
+# also defines limits to the labelled sliders based on current values
+<ZoneControlFrame>:
+  zone: 'Living Room 1'
+  hiLimit: hi.slider_value
+  lowLimit: low.slider_value
+  currentTemp:
+  spacing: 20
+  padding: (30,0)
+  Label:
+    id: temperature
+    text: root.currentTemp
+    size_hint: (.9,1)
+    font_size: 100
+  LabelledHiSlider:
+    id: hi
+    slider_barLimitPos: low.slider_currentPos
+    slider_color: [.1,.1,.1,.9]
+    slider_label: 'Hi'
+    size_hint: (.05,1)
+  LabelledLowSlider:
+    id: low
+    slider_barLimitPos: hi.slider_currentPos
+    slider_color: [.1,.1,.1,.9]
+    slider_label: 'Lo'
+    size_hint: (.05,1)
+
+## Compiles a LimitedLowSliderin a layout with a label and value
+# slider value, then slider, then slider label
+<LabelledLowSlider>:
+  # Sets the layout to vertical and 32px wide with 20px of vertical padding
+  orientation: 'vertical'
+  size_hint_x: None
+  width: 32
+  padding: [0,20,0,20]
+
+  # Specific attributes for the Limited Slider
+  slider_currentPos: setting.value_pos[1]
+  slider_barLimitPos:
+
+  # Attributes for formatting
+  slider_label: lab.text
+  slider_color: setting.value_track_color
+  slider_value: setting.value
+
+  # Slider value printout
+  Label:
+    id: number
+    text: str(int(setting.value))
+    size_hint_y: 10
+
+  # Limited Slider
+  LowSlider:
+    id: setting
+    size_hint_y: 90
+    min: 40
+    max: 90
+    orientation: 'vertical'
+    limit: root.slider_barLimitPos
+    value_track_color: root.slider_color
+    value_track: True
+    step: 2
+    sensitivity: 'handle'
+    value: 65
+
+  # Label for the slider
+  Label:
+    id: lab
+    text: root.slider_label
+    size_hint_y: 10
+
+## Compiles a LimitedHiSliderin a layout with a label and value
+# slider value, then slider, then slider label
+<LabelledHiSlider>:
+  # Sets the layout to vertical and 32px wide with 20px of vertical padding
+  orientation: 'vertical'
+  size_hint_x: None
+  width: 32
+  padding: [0,20,0,20]
+
+  # Specific attributes for the Limited Slider
+  slider_currentPos: setting.value_pos[1]
+  slider_barLimitPos:
+
+  # Attributes for formatting
+  slider_label: lab.text
+  slider_color: setting.value_track_color
+  slider_value: setting.value
+
+  # Slider value printout
+  Label:
+    id: number
+    text: str(int(setting.value))
+    size_hint_y: 10
+
+  # Limited Slider
+  HiSlider:
+    id: setting
+    size_hint_y: 90
+    min: 40
+    max: 90
+    orientation: 'vertical'
+    limit: root.slider_barLimitPos
+    value_track_color: root.slider_color
+    value_track: True
+    step: 2
+    sensitivity: 'handle'
+    value: 72
+
+  # Label for the slider
+  Label:
+    id: lab
+    text: root.slider_label
+    size_hint_y: 10
+
+## Custom vertical Slider rule
+# Provies a line from the handle-bottom, and a line from a :limit: to the top
+<-LowSlider>
+  orientation: 'vertical'
+  value_track: True
+  limit:
+  canvas:
+    Color:
+      rgb: 1, 1, 1
+    BorderImage:
+      border: self.border_horizontal if self.orientation == 'horizontal' else self.border_vertical
+      pos: (self.x + self.padding, self.center_y - self.background_width / 2) if self.orientation == 'horizontal' else (self.center_x-3, self.y + self.padding)
+      size: (self.width - self.padding * 2, self.background_width) if self.orientation == 'horizontal' else (6, self.height + 2 - self.padding * 2)
+      source: (self.background_disabled_horizontal if self.orientation == 'horizontal' else self.background_disabled_vertical) if self.disabled else (self.background_horizontal if self.orientation == 'horizontal' else 'Slider_Background.png')
+
+    Color:
+      rgba: root.value_track_color if self.value_track and self.orientation == 'vertical' else [1, 1, 1, 0]
+    Line:
+      width: self.value_track_width
+      points: self.center_x, self.value_pos[1], self.center_x, self.y+self.padding
+      Color:
+        rgb: 1, 1, 1
+    Line:
+      width: self.value_track_width
+      points: self.center_x, self.top-self.padding, self.center_x, self.limit
+      Color:
+        rgb: 1, 1, 1
+  Image:
+    pos: (root.value_pos[0] - root.cursor_width / 2, root.center_y - root.cursor_height / 2) if root.orientation == 'horizontal' else (root.center_x - root.cursor_width / 2, root.value_pos[1] - root.cursor_height / 2)
+    size: root.cursor_size
+    source: root.cursor_disabled_image if root.disabled else root.cursor_image
+
+## Custom vertical Slider rule
+# Provies a line from the handle-top, and a line from a :limit: to the bottom
+<-HiSlider>
+  orientation: 'vertical'
+  value_track: True
+  limit:
+  canvas:
+    Color:
+      rgb: 1, 1, 1
+    BorderImage:
+      border: self.border_horizontal if self.orientation == 'horizontal' else self.border_vertical
+      pos: (self.x + self.padding, self.center_y - self.background_width / 2) if self.orientation == 'horizontal' else (self.center_x-3, self.y + self.padding)
+      size: (self.width - self.padding * 2, self.background_width) if self.orientation == 'horizontal' else (6, self.height + 2 - self.padding * 2)
+      source: (self.background_disabled_horizontal if self.orientation == 'horizontal' else self.background_disabled_vertical) if self.disabled else (self.background_horizontal if self.orientation == 'horizontal' else 'Slider_Background.png')
+
+    Color:
+      rgba: root.value_track_color if self.value_track and self.orientation == 'vertical' else [1, 1, 1, 0]
+    Line:
+      width: self.value_track_width
+      points: self.center_x, self.value_pos[1], self.center_x, self.top-self.padding
+      Color:
+        rgb: 1, 1, 1
+    Line:
+      width: self.value_track_width
+      points: self.center_x, self.y+self.padding, self.center_x, self.limit
+      Color:
+        rgb: 1, 1, 1
+  Image:
+    pos: (root.value_pos[0] - root.cursor_width / 2, root.center_y - root.cursor_height / 2) if root.orientation == 'horizontal' else (root.center_x - root.cursor_width / 2, root.value_pos[1] - root.cursor_height / 2)
+    size: root.cursor_size
+    source: root.cursor_disabled_image if root.disabled else root.cursor_image
