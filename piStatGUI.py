@@ -11,6 +11,7 @@ from functools import partial
 import paho.mqtt.client as mqtt
 import time
 
+
 # Custom sliders
 class LowSlider(Slider):
     limit = ObjectProperty()
@@ -31,6 +32,7 @@ class LabelledLowSlider(BoxLayout):
     slider_currentPos = ObjectProperty()
     slider_value = NumericProperty()
 
+
 ## Zone control frame implementation
 class ZoneControlFrame(BoxLayout):
     hiLimit = NumericProperty()
@@ -45,14 +47,14 @@ class ZoneControlFrame(BoxLayout):
         lowWidget.ids.setting.bind(value = self.setLow)
         hiWidget.ids.setting.bind(value = self.setHi)
         self.currentTemp = 'Initializing...'
-        Clock.schedule_once(partial(self.get_temperature,'Living Room 1'),1)
-        Clock.schedule_interval(partial(self.get_temperature,'Living Room 1'),61)
+        Clock.schedule_once(partial(self.get_temperature, 'Living Room 1'), 1)
+        Clock.schedule_interval(partial(self.get_temperature, 'Living Room 1'), 61)
 
     # MQTT protocols to fetch and set temperatures
     def get_temperature(self, zone, *largs):
         def on_message(client, userdata, msg):
-    #        print('Message received: '+msg.payload.decode('utf8'))
-            self.currentTemp = str(float(msg.payload.decode('utf8')) *1.8+32)+ ' \N{DEGREE SIGN}F'
+            # print('Message received: '+msg.payload.decode('utf8'))
+            self.currentTemp = str(float(msg.payload.decode('utf8')) * 1.8 + 32) + ' \N{DEGREE SIGN}F'
         def on_connect(client, userdata, flags, result_code):
             if result_code != 0:
                 print('connection refused: '+ str(result_code))
@@ -66,7 +68,7 @@ class ZoneControlFrame(BoxLayout):
         client.connect("m11.cloudmqtt.com", port = 13489, keepalive = 60)
         client.loop_start()
 #        time.sleep(1)
-        client.subscribe('ballomare/thermostat/'+zone)
+        client.subscribe('rasqi/thermostat/'+zone)
         time.sleep(.5)
         client.disconnect()
         client.loop_stop()
@@ -81,8 +83,10 @@ class ZoneControlFrame(BoxLayout):
             self.hiLimit = (self.lowLimit+2)
             instance.value = (self.lowLimit+2)
 
+
 class piStatGUI(App):
     pass
+
 
 if __name__ == '__main__':
     piStatGUI().run()
